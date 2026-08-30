@@ -1,0 +1,65 @@
+services:
+
+  app:
+    build: .
+    container_name: pecus-backend
+    restart: always
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:sqlserver://sqlserver:1433;databaseName=${DB_NAME};encrypt=true;trustServerCertificate=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_USERNAME: ${RABBIT_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBIT_PASS}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      APP_SECURITY_SECRET_KEY: ${SECRET_KEY}
+      INTERNAL_TOKEN: ${INTERNAL_TOKEN}
+
+
+
+
+
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    restart: always
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${DB_PASS}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    healthcheck:
+      # testa se o SQL Server já está aceitando conexões
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${DB_PASS}" -Q "SELECT 1" -No
+      interval: 10s   # testa a cada 10 segundos
+      timeout: 5s     # se não responder em 5s, considera falhou
+      retries: 8      # tenta 8 vezes antes de desistir (~80 segundos de tolerância)
+      start_period: 20s  # espera 20s antes de começar os testes — SQL Server precisa desse tempo pra iniciar
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBIT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASS}
+
+volumes:
+  sql_data:
