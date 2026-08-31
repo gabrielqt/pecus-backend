@@ -23,6 +23,7 @@ public class AnimalWeighing {
 
     @ManyToOne
     @JoinColumn(name = "animal_id")
+    @NotNull
     private Animal animal;
 
     @Column(nullable = false)

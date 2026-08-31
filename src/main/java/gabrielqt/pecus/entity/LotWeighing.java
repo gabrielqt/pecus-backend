@@ -23,6 +23,7 @@ public class LotWeighing {
 
     @ManyToOne
     @JoinColumn(name = "lot_id")
+    @NotNull
     private Lot lot;
 
     @NotNull

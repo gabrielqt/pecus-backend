@@ -1,7 +1,7 @@
 package gabrielqt.pecus.entity;
 
-import gabrielqt.pecus.entity.enums.TransactionCategory;
-import gabrielqt.pecus.entity.enums.TransactionType;
+import gabrielqt.pecus.entity.enums.FinancialMovementCategory;
+import gabrielqt.pecus.entity.enums.FinancialMovementType;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -16,12 +16,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "transaction")
+@Table(name = "financial_movement")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Transaction {
+public class FinancialMovement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,10 +43,12 @@ public class Transaction {
     private Animal animal;
 
     @Enumerated(EnumType.STRING)
-    private TransactionType type;
+    @NotNull
+    private FinancialMovementType financialMovementType;
 
     @Enumerated(EnumType.STRING)
-    private TransactionCategory category;
+    @NotNull
+    private FinancialMovementCategory category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lot_id")

@@ -2,6 +2,7 @@ package gabrielqt.pecus.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,5 +31,6 @@ public class Lot {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "farm_id")
+    @NotNull
     private Farm farm;
 }

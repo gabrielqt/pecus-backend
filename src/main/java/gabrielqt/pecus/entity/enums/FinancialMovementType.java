@@ -1,6 +1,6 @@
 package gabrielqt.pecus.entity.enums;
 
 
-public enum TransactionType {
+public enum FinancialMovementType {
     INCOME, EXPENSE
 }
