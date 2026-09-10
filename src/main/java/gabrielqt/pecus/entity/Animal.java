@@ -1,5 +1,6 @@
 package gabrielqt.pecus.entity;
 
+import gabrielqt.pecus.entity.enums.AnimalCategory;
 import gabrielqt.pecus.entity.enums.Sex;
 import gabrielqt.pecus.entity.enums.StatusAnimal;
 import jakarta.persistence.*;
@@ -11,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "animal")
@@ -45,4 +47,17 @@ public class Animal {
 
     @Column(nullable = false)
     private LocalDate birthDate;
+
+    public AnimalCategory getCategory(){
+        long daysLife = ChronoUnit.DAYS.between(birthDate, LocalDate.now());
+        if(daysLife <= 240){
+            return AnimalCategory.CALF;
+        }
+        else if(daysLife <= 720){
+            return AnimalCategory.YEARLING;
+        }
+        else{
+            return AnimalCategory.ADULT;
+        }
+    }
 }
