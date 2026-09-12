@@ -2,11 +2,14 @@ package gabrielqt.pecus.endpoint;
 
 import gabrielqt.pecus.dto.request.FarmRequest;
 import gabrielqt.pecus.dto.response.FarmResponse;
+import gabrielqt.pecus.entity.Farm;
 import gabrielqt.pecus.entity.User;
 import gabrielqt.pecus.entity.enums.Role;
 import gabrielqt.pecus.service.FarmService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -25,4 +28,11 @@ public class FarmEndpoint {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(farmService.save(farmRequest, user));
     }
+
+    @RequestMapping
+    public ResponseEntity<Page<FarmResponse>> findByUser(Pageable pageable, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(farmService.findByUser(pageable, user));
+    }
+
 }

@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "farm")
 @Data
@@ -31,5 +33,13 @@ public class Farm {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User owner;
+
+    @ManyToMany
+    @JoinTable(
+            name = "farm_worker",
+            joinColumns = @JoinColumn(name = "farm_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> workers;
 }

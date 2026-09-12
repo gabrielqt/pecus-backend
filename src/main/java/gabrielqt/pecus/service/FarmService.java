@@ -9,6 +9,8 @@ import gabrielqt.pecus.exception.ObjectNotFoundException;
 import gabrielqt.pecus.mapper.FarmMapper;
 import gabrielqt.pecus.repository.FarmRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import static java.util.Objects.isNull;
@@ -34,8 +36,12 @@ public class FarmService {
                 .orElseThrow(() -> new ObjectNotFoundException(Farm.class, id));
     }
 
+    public Page<FarmResponse> findByUser(Pageable pageable, User user) {
+        return farmRepository.findAllByUser(pageable, user.getId()).map(farmMapper::toResponse);
+    }
+
     public boolean validateFarmByUser(Farm farm, User user) {
-        return farm.getUser().getId().equals(user.getId());
+        return farm.getOwner().getId().equals(user.getId());
     }
 
 }
