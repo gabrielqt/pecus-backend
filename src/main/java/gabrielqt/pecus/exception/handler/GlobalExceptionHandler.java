@@ -1,5 +1,8 @@
 package gabrielqt.pecus.exception.handler;
 
+import gabrielqt.pecus.dto.response.ErrorResponse;
+import gabrielqt.pecus.exception.BusinessException;
+import gabrielqt.pecus.exception.ObjectNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
