@@ -13,7 +13,7 @@ public class UserMapper {
 
     public User toEntity(RegisterRequest registerRequest) {
         return User.builder()
-                .name(registerRequest.name())
+                .nickname(registerRequest.nickname())
                 .email(registerRequest.email())
                 .password(passwordEncoder.encode(registerRequest.password()))
                 .role(registerRequest.role())
