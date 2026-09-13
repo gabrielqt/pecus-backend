@@ -45,7 +45,16 @@ public class FarmService {
     }
 
     public void validateFarmByUser(Farm farm, User user) {
-        if (farm.getOwner().getId().equals(user.getId())) {throw new BusinessException("This farm is not owned by this user.");}
+        boolean isOwner = farm.getOwner().getId().equals(user.getId());
+
+        boolean isWorker = farm.getWorkers().stream()
+                .anyMatch(worker -> worker.getId().equals(user.getId()));
+
+        if (!isOwner && !isWorker) {
+            throw new BusinessException(
+                    "This farm is not owned by this user or doesn't work in this farm."
+            );
+        }
     }
 
 }

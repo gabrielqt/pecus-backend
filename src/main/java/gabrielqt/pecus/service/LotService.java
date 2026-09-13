@@ -34,11 +34,10 @@ public class LotService {
                 .orElseThrow(() -> new ObjectNotFoundException(Lot.class, id));
     }
 
-    // TODO
-//
-//    public Page<LotResponse> findAllByFarmId(Long farmId, Pageable pageable){
-//        farmService.validateFarmByUser(farm, user); // OWNER E WORKER
-//        return lotRepository.findByFarmId(farmId, pageable).map(lotMapper::toResponse);
+
+    public Page<LotResponse> findAllByFarmId(Long farmId, Pageable pageable){
+        farmService.validateFarmByUser(farm, user); // OWNER E WORKER
+        return lotRepository.findByFarmId(farmId, pageable).map(lotMapper::toResponse);
     }
 
     private void validateLotExists(Long id){
