@@ -22,7 +22,7 @@ public class FarmEndpoint {
     private final FarmService farmService;
 
     @PutMapping
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("@farmSecurity.isOwner(#farmRequest.id, authentication)")
     public ResponseEntity<FarmResponse> saveFarm(@Valid @RequestBody FarmRequest farmRequest,
                                                  Authentication authentication) {
         User user = (User) authentication.getPrincipal();
@@ -35,8 +35,8 @@ public class FarmEndpoint {
         return ResponseEntity.ok(farmService.findByUser(pageable, user));
     }
 
-
     @RequestMapping("/{id}")
+    @PreAuthorize("@farmSecurity.canAccess(#id, authentication)")
     public ResponseEntity<FarmResponse> findById(@PathVariable Long id, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(farmService.findById(id, user));

@@ -7,6 +7,7 @@ import gabrielqt.pecus.service.LotService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,11 +21,10 @@ public class LotEndpoint {
     private final LotService lotService;
 
     @PutMapping
+    @PreAuthorize("@farmSecurity.isOwner(#request.farmId, authentication)")
     public ResponseEntity<LotResponse> saveLot(@RequestBody LotRequest request, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(lotService.save(request, user));
     }
 
-    @RequestMapping
-    public ResponseEntity<Page<LotResponse>> findAllByFarm(Authentication authentication) {}
 }

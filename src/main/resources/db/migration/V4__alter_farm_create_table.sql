@@ -1,12 +1,12 @@
 ALTER TABLE farm
-    DROP CONSTRAINT FK__farm__user_id;
+    DROP CONSTRAINT FK_farm_user;
 
 EXEC sp_rename 'farm.user_id', 'owner_id', 'COLUMN';
 
 ALTER TABLE farm
     ADD CONSTRAINT FK_farm_owner
         FOREIGN KEY (owner_id)
-        REFERENCES [user](id);
+        REFERENCES [users](id);
 
 CREATE TABLE farm_worker (
                              farm_id BIGINT NOT NULL,
@@ -21,5 +21,5 @@ CREATE TABLE farm_worker (
 
                              CONSTRAINT FK_farm_worker_user
                                  FOREIGN KEY (user_id)
-                                     REFERENCES [user](id)
+                                     REFERENCES [users](id)
 );

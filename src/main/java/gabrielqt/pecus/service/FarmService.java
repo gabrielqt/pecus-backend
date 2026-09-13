@@ -24,7 +24,6 @@ public class FarmService {
     public FarmResponse save(FarmRequest farmRequest, User user) {
         if (!isNull(farmRequest.id())) {
             Farm farm = findById(farmRequest.id());
-            validateFarmByUser(farm, user);
         }
         return farmMapper.toResponse(farmRepository.save(farmMapper.toEntity(farmRequest, user)));
     }
@@ -36,25 +35,11 @@ public class FarmService {
 
     public FarmResponse findById(Long id, User user) {
         Farm farm = findById(id);
-        validateFarmByUser(farm, user);
         return farmMapper.toResponse(farm);
     }
 
     public Page<FarmResponse> findByUser(Pageable pageable, User user) {
         return farmRepository.findAllByUser(pageable, user.getId()).map(farmMapper::toResponse);
-    }
-
-    public void validateFarmByUser(Farm farm, User user) {
-        boolean isOwner = farm.getOwner().getId().equals(user.getId());
-
-        boolean isWorker = farm.getWorkers().stream()
-                .anyMatch(worker -> worker.getId().equals(user.getId()));
-
-        if (!isOwner && !isWorker) {
-            throw new BusinessException(
-                    "This farm is not owned by this user or doesn't work in this farm."
-            );
-        }
     }
 
 }
