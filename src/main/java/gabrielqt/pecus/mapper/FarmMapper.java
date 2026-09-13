@@ -15,7 +15,7 @@ public class FarmMapper{
         return Farm.builder()
                 .id(farmRequest.id())
                 .name(farmRequest.name())
-                .user(user)
+                .owner(user)
                 .city(farmRequest.city())
                 .state(farmRequest.state())
                 .build();
