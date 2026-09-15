@@ -29,13 +29,13 @@ public class FarmEndpoint {
         return ResponseEntity.ok(farmService.save(farmRequest, user));
     }
 
-    @RequestMapping
+    @GetMapping
     public ResponseEntity<Page<FarmResponse>> findAllByUser(Pageable pageable, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(farmService.findByUser(pageable, user));
     }
 
-    @RequestMapping("/{id}")
+    @GetMapping("/{id}")
     @PreAuthorize("@farmSecurity.canAccess(#id, authentication)")
     public ResponseEntity<FarmResponse> findById(@PathVariable Long id, Authentication authentication) {
         User user = (User) authentication.getPrincipal();

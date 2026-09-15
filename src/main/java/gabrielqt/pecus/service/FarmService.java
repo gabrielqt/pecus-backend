@@ -4,7 +4,6 @@ import gabrielqt.pecus.dto.request.FarmRequest;
 import gabrielqt.pecus.dto.response.FarmResponse;
 import gabrielqt.pecus.entity.Farm;
 import gabrielqt.pecus.entity.User;
-import gabrielqt.pecus.exception.BusinessException;
 import gabrielqt.pecus.exception.ObjectNotFoundException;
 import gabrielqt.pecus.mapper.FarmMapper;
 import gabrielqt.pecus.repository.FarmRepository;
@@ -18,13 +17,11 @@ import static java.util.Objects.isNull;
 @Service
 @RequiredArgsConstructor
 public class FarmService {
-    private FarmRepository farmRepository;
-    private FarmMapper farmMapper;
+    private final FarmRepository farmRepository;
+    private final FarmMapper farmMapper;
 
     public FarmResponse save(FarmRequest farmRequest, User user) {
-        if (!isNull(farmRequest.id())) {
-            Farm farm = findById(farmRequest.id());
-        }
+        validateFarmExists(farmRequest);
         return farmMapper.toResponse(farmRepository.save(farmMapper.toEntity(farmRequest, user)));
     }
 
@@ -42,4 +39,9 @@ public class FarmService {
         return farmRepository.findAllByUser(pageable, user.getId()).map(farmMapper::toResponse);
     }
 
+    private void validateFarmExists(FarmRequest farmRequest) {
+        if (!isNull(farmRequest.id())) {
+            Farm farm = findById(farmRequest.id());
+        }
+    }
 }
