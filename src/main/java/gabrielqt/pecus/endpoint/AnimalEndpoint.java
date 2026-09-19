@@ -1,11 +1,11 @@
 package gabrielqt.pecus.endpoint;
 
-import gabrielqt.pecus.dto.request.LotRequest;
-import gabrielqt.pecus.dto.response.LotResponse;
+import gabrielqt.pecus.dto.request.AnimalRequest;
+import gabrielqt.pecus.dto.response.AnimalResponse;
 import gabrielqt.pecus.entity.User;
-import gabrielqt.pecus.service.LotService;
+import gabrielqt.pecus.service.AnimalService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/lot")
-public class LotEndpoint {
-    private final LotService lotService;
+@RequestMapping("/animal")
+public class AnimalEndpoint {
+    private final AnimalService animalService;
 
     @PutMapping
     @PreAuthorize("@farmSecurity.isOwner(#request.farmId, authentication)")
-    public ResponseEntity<LotResponse> saveLot(@RequestBody LotRequest request, Authentication authentication) {
+    public ResponseEntity<AnimalResponse> saveAnimal(@Valid @RequestBody AnimalRequest request, Authentication authentication) {
 
         User user = (User) authentication.getPrincipal();
-        return ResponseEntity.ok(lotService.save(request, user));
+        return ResponseEntity.ok(animalService.save(request, user));
     }
 
 }

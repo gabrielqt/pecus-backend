@@ -20,11 +20,13 @@ public class AuthEndpoint {
 
     @RequestMapping("/login")
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest registerDTO) {
+
         authService.register(registerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

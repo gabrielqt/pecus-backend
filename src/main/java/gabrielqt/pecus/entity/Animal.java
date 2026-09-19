@@ -41,6 +41,10 @@ public class Animal {
     @JoinColumn(name = "breed_id")
     private Breed breed;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "farm_id")
+    private Farm farm;
+
     @ManyToOne
     @JoinColumn(name = "lot_id")
     private Lot lot;

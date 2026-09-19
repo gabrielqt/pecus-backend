@@ -21,12 +21,14 @@ public class LotService {
     private final LotMapper lotMapper;
 
     public LotResponse save(LotRequest request, User user){
+
         Farm farm = farmService.findById(request.farmId());
         validateLotExists(request.id());
         return lotMapper.toResponse(lotRepository.save(lotMapper.toEntity(request, farm)));
     }
 
     public Lot findById(Long id){
+
         return lotRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException(Lot.class, id));
     }
@@ -37,6 +39,7 @@ public class LotService {
     }
 
     private void validateLotExists(Long id){
+
         if (id != null){
             findById(id);
         }

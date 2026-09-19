@@ -21,25 +21,30 @@ public class FarmService {
     private final FarmMapper farmMapper;
 
     public FarmResponse save(FarmRequest farmRequest, User user) {
+
         validateFarmExists(farmRequest);
         return farmMapper.toResponse(farmRepository.save(farmMapper.toEntity(farmRequest, user)));
     }
 
     public Farm findById(Long id) {
+
         return farmRepository.findById(id)
                 .orElseThrow(() -> new ObjectNotFoundException(Farm.class, id));
     }
 
     public FarmResponse findById(Long id, User user) {
+
         Farm farm = findById(id);
         return farmMapper.toResponse(farm);
     }
 
     public Page<FarmResponse> findByUser(Pageable pageable, User user) {
+
         return farmRepository.findAllByUser(pageable, user.getId()).map(farmMapper::toResponse);
     }
 
     private void validateFarmExists(FarmRequest farmRequest) {
+
         if (!isNull(farmRequest.id())) {
             Farm farm = findById(farmRequest.id());
         }
