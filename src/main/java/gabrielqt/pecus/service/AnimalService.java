@@ -2,6 +2,7 @@ package gabrielqt.pecus.service;
 
 import static java.util.Objects.nonNull;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,18 +37,11 @@ public class AnimalService {
     @Transactional
     public AnimalResponse save(AnimalRequest animalRequest, User user) {
 
-        validateAnimalExists(animalRequest);
-        validateExistsEartag(animalRequest.farmId(), animalRequest.earTag());
-        validateLotAndFarm(animalRequest.lotId(), animalRequest.farmId());
+        validateSave(animalRequest);
+        
+        Animal animal = buildAndSaveAnimal(animalRequest);
 
-
-        Farm farm = farmService.findById(animalRequest.farmId());
-        Lot lot = nonNull(animalRequest.lotId()) ? lotService.findById(animalRequest.lotId()) : null;
-        Breed breed = nonNull(animalRequest.breedId()) ? findBreedById(animalRequest.breedId()) : null;
-
-        Animal animal = animalRepository.save(animalMapper.toEntity(animalRequest, farm, lot, breed));
-
-        animalWeighingService.save(animalRequest.animalWeighingRequest(), animal);
+        saveInitialAnimalWeighingIfPresent(animalRequest, animal);
 
         return animalMapper.toResponse(animal);
     }
@@ -92,4 +86,29 @@ public class AnimalService {
             throw new BusinessException("Esse lote não pertence a essa fazenda.");
         }
     }
+
+    private Animal buildAndSaveAnimal(AnimalRequest animalRequest) {
+
+        Farm farm = farmService.findById(animalRequest.farmId());
+        Lot lot = nonNull(animalRequest.lotId()) ? lotService.findById(animalRequest.lotId()) : null;
+        Breed breed = nonNull(animalRequest.breedId()) ? findBreedById(animalRequest.breedId()) : null;
+
+        return animalRepository.save(animalMapper.toEntity(animalRequest, farm, lot, breed));
+    }
+
+    private void validateSave(AnimalRequest animalRequest) {
+
+        validateAnimalExists(animalRequest);
+        validateExistsEartag(animalRequest.farmId(), animalRequest.earTag());
+        validateLotAndFarm(animalRequest.lotId(), animalRequest.farmId());
+    }
+
+    private void saveInitialAnimalWeighingIfPresent(AnimalRequest animalRequest, Animal animal) {
+
+        if (nonNull(animalRequest.animalWeighingRequest())) {
+
+            animalWeighingService.save(animalRequest.animalWeighingRequest(), animal);
+        }
+    }
+
 }
