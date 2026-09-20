@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import gabrielqt.pecus.dto.request.AnimalRequest;
 import gabrielqt.pecus.dto.response.AnimalResponse;
@@ -13,6 +14,7 @@ import gabrielqt.pecus.entity.Breed;
 import gabrielqt.pecus.entity.Farm;
 import gabrielqt.pecus.entity.Lot;
 import gabrielqt.pecus.entity.User;
+import gabrielqt.pecus.exception.BusinessException;
 import gabrielqt.pecus.exception.ObjectNotFoundException;
 import gabrielqt.pecus.mapper.AnimalMapper;
 import gabrielqt.pecus.repository.AnimalRepository;
@@ -29,17 +31,25 @@ public class AnimalService {
     private final FarmService farmService;
     private final LotService lotService;
     private final BreedRepository breedRepository;
+    private final AnimalWeighingService animalWeighingService;
 
+    @Transactional
     public AnimalResponse save(AnimalRequest animalRequest, User user) {
 
         validateAnimalExists(animalRequest);
+        validateExistsEartag(animalRequest.farmId(), animalRequest.earTag());
+        validateLotAndFarm(animalRequest.lotId(), animalRequest.farmId());
+
 
         Farm farm = farmService.findById(animalRequest.farmId());
         Lot lot = nonNull(animalRequest.lotId()) ? lotService.findById(animalRequest.lotId()) : null;
         Breed breed = nonNull(animalRequest.breedId()) ? findBreedById(animalRequest.breedId()) : null;
 
-        Animal animal = animalMapper.toEntity(animalRequest, farm, lot, breed);
-        return animalMapper.toResponse(animalRepository.save(animal));
+        Animal animal = animalRepository.save(animalMapper.toEntity(animalRequest, farm, lot, breed));
+
+        animalWeighingService.save(animalRequest.animalWeighingRequest(), animal);
+
+        return animalMapper.toResponse(animal);
     }
 
     public Animal findById(Long id) {
@@ -62,7 +72,24 @@ public class AnimalService {
     private void validateAnimalExists(AnimalRequest animalRequest) {
 
         if (nonNull(animalRequest.id())) {
+
             findById(animalRequest.id());
+        }
+    }
+
+    private void validateExistsEartag(Long farmId, String eartag){
+
+        if (animalRepository.existsByFarmIdAndEartag(farmId,  eartag)) {
+
+            throw new BusinessException("Número de brinco já cadastrado nessa fazenda.");
+        }
+    }
+
+    private void validateLotAndFarm(Long farmId, Long lotId) {
+
+        if (lotService.existsLotInFarm(farmId, lotId)){
+
+            throw new BusinessException("Esse lote não pertence a essa fazenda.");
         }
     }
 }

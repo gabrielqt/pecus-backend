@@ -1,6 +1,7 @@
 package gabrielqt.pecus.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class AnimalWeighing {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,6 +29,7 @@ public class AnimalWeighing {
     private Animal animal;
 
     @Column(nullable = false)
+    @Min(value = 0, message = "Não é possível gravar um animal com peso 0.")
     private BigDecimal weight;
 
     @NotNull

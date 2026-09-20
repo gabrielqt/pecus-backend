@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "lot_weighing")
@@ -27,7 +27,7 @@ public class LotWeighing {
     private Lot lot;
 
     @NotNull
-    private LocalDateTime weighingDate;
+    private LocalDate weighingDate;
 
     @NotNull
     private Integer sampledAnimalsCount;

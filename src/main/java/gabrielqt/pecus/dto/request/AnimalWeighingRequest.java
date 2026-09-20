@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record AnimalWeighingRequest(
-    Long AnimalId,
+    Long animalId,
     BigDecimal weight,
     LocalDate weighingDate
 ) {

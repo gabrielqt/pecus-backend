@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LotRepository extends JpaRepository<Lot, Long> {
     Page<Lot>  findByFarmId(Long farmId, Pageable pageable);
+    boolean existsByFarmIdAndId(Long farmId,  Long lotId);
 }

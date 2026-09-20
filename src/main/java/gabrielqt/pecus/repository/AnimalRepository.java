@@ -10,4 +10,4 @@ import gabrielqt.pecus.entity.Animal;
 @Repository
 public interface AnimalRepository extends JpaRepository<Animal, Long> {
     Page<Animal> findByFarmId(Long farmId, Pageable pageable);
-}
+    boolean existsByFarmIdAndEartag(Long farmId, String eartag);}

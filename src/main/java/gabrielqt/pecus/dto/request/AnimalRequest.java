@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import gabrielqt.pecus.entity.Animal;
 import gabrielqt.pecus.entity.enums.Sex;
 import gabrielqt.pecus.entity.enums.StatusAnimal;
 
@@ -31,4 +32,9 @@ public record AnimalRequest(
 
     AnimalWeighingRequest animalWeighingRequest
 ) {
+
+    public AnimalRequest { // construtor compacto
+
+        earTag = earTag != null ? earTag.strip() : earTag;
+    }
 }

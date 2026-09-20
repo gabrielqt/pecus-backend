@@ -45,4 +45,9 @@ public class LotService {
         }
     }
 
+    public boolean existsLotInFarm(Long farmId, Long lotId){
+
+        return lotRepository.existsByFarmIdAndId(farmId, lotId);
+    }
+
 }
