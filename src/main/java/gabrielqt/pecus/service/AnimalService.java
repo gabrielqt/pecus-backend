@@ -81,7 +81,7 @@ public class AnimalService {
 
     private void validateLotAndFarm(Long farmId, Long lotId) {
 
-        if (lotService.existsLotInFarm(farmId, lotId)){
+        if (nonNull(lotId) && !lotService.existsLotInFarm(farmId, lotId)){
 
             throw new BusinessException("Esse lote não pertence a essa fazenda.");
         }
@@ -100,7 +100,7 @@ public class AnimalService {
 
         validateAnimalExists(animalRequest);
         validateExistsEartag(animalRequest.farmId(), animalRequest.earTag());
-        validateLotAndFarm(animalRequest.lotId(), animalRequest.farmId());
+        validateLotAndFarm(animalRequest.farmId(), animalRequest.lotId());
     }
 
     private void saveInitialAnimalWeighingIfPresent(AnimalRequest animalRequest, Animal animal) {

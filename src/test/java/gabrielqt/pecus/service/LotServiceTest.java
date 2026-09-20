@@ -19,42 +19,39 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
-@ExtendWith(MockitoExtension.class)   // liga o Mockito no JUnit
+@ExtendWith(MockitoExtension.class)
 class LotServiceTest {
 
-    @Mock                              // dublê falso do repository
+    @Mock
     private LotRepository lotRepository;
 
-    @Mock                             // dublê falso do outro service
+    @Mock
     private FarmService farmService;
 
-    @Mock                             // dublê falso do mapper
+    @Mock
     private LotMapper lotMapper;
 
-    @InjectMocks                      // o service REAL, com os mocks injetados
+    @InjectMocks
     private LotService lotService;
 
 
     @Test
     void deveSalvarLoteQuandoDadosValidos() {
-        // Arrange — preparo os dados e ensino os mocks
+
         LotRequest request = new LotRequest(null, "Piquete 3", "Pasto A", 1L);
         Farm farm = new Farm();
         Lot lot = Lot.builder().id(1L).name("Piquete 3").paddock("Pasto A").farm(farm).build();
         LotResponse expectedResponse = new LotResponse(lot.getId(), lot.getName(), lot.getPaddock(), lot.getFarm().getId());
 
-        // ensino cada mock a responder:
-        when(farmService.findById(1L)).thenReturn(farm);           // quando buscar farm 1, devolve farm
-        when(lotMapper.toEntity(request, farm)).thenReturn(lot);   // quando mapear, devolve lot
-        when(lotRepository.save(lot)).thenReturn(lot);             // quando salvar, devolve lot
+        when(farmService.findById(1L)).thenReturn(farm);
+        when(lotMapper.toEntity(request, farm)).thenReturn(lot);
+        when(lotRepository.save(lot)).thenReturn(lot);
         when(lotMapper.toResponse(lot)).thenReturn(expectedResponse);
 
-        // Act — executo o método real
         LotResponse result = lotService.save(request, null);
 
-        // Assert — verifico o resultado E que os mocks foram usados
         assertEquals(expectedResponse, result);
-        verify(lotRepository).save(lot);        // confere que salvou de verdade
+        verify(lotRepository).save(lot);
     }
 
     @Test
@@ -63,7 +60,7 @@ class LotServiceTest {
         LotRequest request = new LotRequest(3L, "abc", "def", 5L);
 
         when(farmService.findById(5L)).thenReturn(new Farm());
-        when(lotRepository.findById(3L)).thenReturn(Optional.empty());  // não acha!
+        when(lotRepository.findById(3L)).thenReturn(Optional.empty());
 
         assertThrows(ObjectNotFoundException.class, () -> lotService.save(request, null));
     }
