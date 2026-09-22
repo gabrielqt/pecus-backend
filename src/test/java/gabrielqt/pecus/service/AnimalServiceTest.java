@@ -38,7 +38,7 @@ class AnimalServiceTest {
     void deveSalvarAnimalComPesoInicial() {
 
         AnimalWeighingRequest pesoRequest = new AnimalWeighingRequest(
-                null, BigDecimal.valueOf(50), LocalDate.of(2026, 1, 10)
+                null, null, BigDecimal.valueOf(50), LocalDate.of(2026, 1, 10)
         );
         AnimalRequest request = new AnimalRequest(
                 null,
@@ -76,7 +76,7 @@ class AnimalServiceTest {
         AnimalRequest request = new AnimalRequest(
                 null, "BOI-002", null, Sex.MALE, null, 1L, null,
                 LocalDate.of(2023, 1, 1),
-                null    // ← SEM peso
+                null
         );
 
         when(animalRepository.existsByFarmIdAndEartag(1L, "BOI-002")).thenReturn(false);

@@ -3,6 +3,7 @@ package gabrielqt.pecus.mapper;
 import org.springframework.stereotype.Component;
 
 import gabrielqt.pecus.dto.request.AnimalWeighingRequest;
+import gabrielqt.pecus.dto.response.AnimalWeighingResponse;
 import gabrielqt.pecus.entity.Animal;
 import gabrielqt.pecus.entity.AnimalWeighing;
 
@@ -18,5 +19,14 @@ public class AnimalWeighingMapper {
                 .weighingDate(request.weighingDate())
                 .weight(request.weight())
                 .build();
+    }
+
+    public AnimalWeighingResponse toResponse(AnimalWeighing animalWeighing) {
+        return new AnimalWeighingResponse(
+                animalWeighing.getId(),
+                animalWeighing.getAnimal().getId(),
+                animalWeighing.getWeight(),
+                animalWeighing.getWeighingDate()
+        );
     }
 }
