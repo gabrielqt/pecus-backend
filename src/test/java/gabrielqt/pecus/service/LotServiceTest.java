@@ -7,9 +7,10 @@ import gabrielqt.pecus.entity.Lot;
 import gabrielqt.pecus.exception.ObjectNotFoundException;
 import gabrielqt.pecus.mapper.LotMapper;
 import gabrielqt.pecus.repository.LotRepository;
+import gabrielqt.pecus.validator.LotValidator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -31,8 +32,14 @@ class LotServiceTest {
     @Mock
     private LotMapper lotMapper;
 
-    @InjectMocks
     private LotService lotService;
+
+    // validator real com o repository mockado, pra continuar testando a regra de lote existente
+    @BeforeEach
+    void setUp() {
+
+        lotService = new LotService(lotRepository, farmService, lotMapper, new LotValidator(lotRepository));
+    }
 
 
     @Test

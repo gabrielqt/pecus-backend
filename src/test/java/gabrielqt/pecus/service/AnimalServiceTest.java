@@ -10,9 +10,10 @@ import gabrielqt.pecus.entity.enums.StatusAnimal;
 import gabrielqt.pecus.mapper.AnimalMapper;
 import gabrielqt.pecus.repository.AnimalRepository;
 import gabrielqt.pecus.repository.BreedRepository;
+import gabrielqt.pecus.validator.AnimalValidator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -32,13 +33,23 @@ class AnimalServiceTest {
     @Mock private BreedRepository breedRepository;
     @Mock private AnimalWeighingService animalWeighingService;
 
-    @InjectMocks private AnimalService animalService;
+    private AnimalService animalService;
+
+    // montado à mão e não com @InjectMocks: o validator é real (com os mocks de repository/service),
+    // assim os testes continuam exercitando as regras de validação e não um mock que sempre passa
+    @BeforeEach
+    void setUp() {
+
+        AnimalValidator animalValidator = new AnimalValidator(animalRepository, lotService);
+        animalService = new AnimalService(animalRepository, animalMapper, farmService, lotService,
+                breedRepository, animalWeighingService, animalValidator);
+    }
 
     @Test
     void deveSalvarAnimalComPesoInicial() {
 
         AnimalWeighingRequest pesoRequest = new AnimalWeighingRequest(
-                null, null, BigDecimal.valueOf(50), LocalDate.of(2026, 1, 10)
+                null, BigDecimal.valueOf(50), LocalDate.of(2026, 1, 10)
         );
         AnimalRequest request = new AnimalRequest(
                 null,

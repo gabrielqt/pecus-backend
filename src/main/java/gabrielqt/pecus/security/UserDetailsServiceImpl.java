@@ -1,6 +1,5 @@
 package gabrielqt.pecus.security;
 
-import gabrielqt.pecus.exception.ObjectNotFoundException;
 import gabrielqt.pecus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +15,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // UsernameNotFoundException e não ObjectNotFoundException: é a única que o DaoAuthenticationProvider
+        // converte em BadCredentialsException (401), qualquer outra vira InternalAuthenticationServiceException (500)
         return userRepository.findByEmail(username)
-                .orElseThrow(() -> new ObjectNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

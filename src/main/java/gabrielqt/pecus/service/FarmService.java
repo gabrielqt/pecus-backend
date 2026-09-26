@@ -7,22 +7,22 @@ import gabrielqt.pecus.entity.User;
 import gabrielqt.pecus.exception.ObjectNotFoundException;
 import gabrielqt.pecus.mapper.FarmMapper;
 import gabrielqt.pecus.repository.FarmRepository;
+import gabrielqt.pecus.validator.FarmValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import static java.util.Objects.isNull;
 
 @Service
 @RequiredArgsConstructor
 public class FarmService {
     private final FarmRepository farmRepository;
     private final FarmMapper farmMapper;
+    private final FarmValidator farmValidator;
 
     public FarmResponse save(FarmRequest farmRequest, User user) {
 
-        validateFarmExists(farmRequest);
+        farmValidator.validateFarmExists(farmRequest);
         return farmMapper.toResponse(farmRepository.save(farmMapper.toEntity(farmRequest, user)));
     }
 
@@ -41,12 +41,5 @@ public class FarmService {
     public Page<FarmResponse> findByUser(Pageable pageable, User user) {
 
         return farmRepository.findAllByUser(pageable, user.getId()).map(farmMapper::toResponse);
-    }
-
-    private void validateFarmExists(FarmRequest farmRequest) {
-
-        if (!isNull(farmRequest.id())) {
-            Farm farm = findById(farmRequest.id());
-        }
     }
 }

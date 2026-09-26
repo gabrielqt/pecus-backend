@@ -43,7 +43,7 @@ public class AnimalWeighingEndpoint {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@animalSecurity.canAccess(#animalId, authentication)")
+    @PreAuthorize("@animalSecurity.canAccessWeighing(#id, authentication)")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
 
         animalWeighingService.deleteById(id);

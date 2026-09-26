@@ -8,6 +8,7 @@ import gabrielqt.pecus.entity.User;
 import gabrielqt.pecus.exception.ObjectNotFoundException;
 import gabrielqt.pecus.mapper.LotMapper;
 import gabrielqt.pecus.repository.LotRepository;
+import gabrielqt.pecus.validator.LotValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +20,12 @@ public class LotService {
     private final LotRepository lotRepository;
     private final FarmService farmService;
     private final LotMapper lotMapper;
+    private final LotValidator lotValidator;
 
     public LotResponse save(LotRequest request, User user){
 
         Farm farm = farmService.findById(request.farmId());
-        validateLotExists(request.id());
+        lotValidator.validateLotExists(request.id());
         return lotMapper.toResponse(lotRepository.save(lotMapper.toEntity(request, farm)));
     }
 
@@ -36,13 +38,6 @@ public class LotService {
 
     public Page<LotResponse> findAllByFarmId(Long farmId, Pageable pageable){
         return lotRepository.findByFarmId(farmId, pageable).map(lotMapper::toResponse);
-    }
-
-    private void validateLotExists(Long id){
-
-        if (id != null){
-            findById(id);
-        }
     }
 
     public boolean existsLotInFarm(Long farmId, Long lotId){

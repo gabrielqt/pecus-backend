@@ -3,8 +3,6 @@ package gabrielqt.pecus.service;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import java.time.LocalDate;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,11 +12,11 @@ import gabrielqt.pecus.dto.request.AnimalWeighingRequest;
 import gabrielqt.pecus.dto.response.AnimalWeighingResponse;
 import gabrielqt.pecus.entity.Animal;
 import gabrielqt.pecus.entity.AnimalWeighing;
-import gabrielqt.pecus.exception.BusinessException;
 import gabrielqt.pecus.exception.ObjectNotFoundException;
 import gabrielqt.pecus.mapper.AnimalWeighingMapper;
 import gabrielqt.pecus.repository.AnimalRepository;
 import gabrielqt.pecus.repository.AnimalWeighingRepository;
+import gabrielqt.pecus.validator.AnimalWeighingValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +26,7 @@ public class AnimalWeighingService {
 
     private final AnimalWeighingRepository animalWeighingRepository;
     private final AnimalWeighingMapper animalWeighingMapper;
+    private final AnimalWeighingValidator animalWeighingValidator;
 
     // repository e não AnimalService: AnimalService já depende desse service (peso inicial), daria dependência circular
     private final AnimalRepository animalRepository;
@@ -42,7 +41,7 @@ public class AnimalWeighingService {
     @Transactional
     public AnimalWeighingResponse save(AnimalWeighingRequest request, Animal animal) {
 
-        validateSave(request, animal);
+        animalWeighingValidator.validateSave(request, animal);
 
         return animalWeighingMapper.toResponse(animalWeighingRepository.save(animalWeighingMapper.toEntity(request, animal)));
     }
@@ -74,18 +73,5 @@ public class AnimalWeighingService {
 
         return animalRepository.findById(animalId)
                 .orElseThrow(() -> new ObjectNotFoundException(Animal.class, animalId));
-    }
-
-    private void validateSave(AnimalWeighingRequest request, Animal animal) {
-
-        validateAnimalWeighingDoesNotExistOnDate(animal.getId(), request.weighingDate());
-    }
-
-    private void validateAnimalWeighingDoesNotExistOnDate(Long animalId, LocalDate date) {
-
-         if (animalWeighingRepository.existsByAnimalIdAndWeighingDate(animalId, date)) {
-
-             throw new BusinessException("Animal já possui uma pesagem registrada nesta data.");
-         }
     }
 }
