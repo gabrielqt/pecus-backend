@@ -22,7 +22,8 @@ public class FarmService {
 
     public FarmResponse save(FarmRequest farmRequest, User user) {
 
-        farmValidator.validateFarmExists(farmRequest);
+        Farm farm = farmValidator.validateFarmExistsAndReturnFarm(farmRequest);
+        farmValidator.validateOwner(farm, user);
         return farmMapper.toResponse(farmRepository.save(farmMapper.toEntity(farmRequest, user)));
     }
 

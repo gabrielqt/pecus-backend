@@ -22,7 +22,6 @@ public class FarmEndpoint {
     private final FarmService farmService;
 
     @PutMapping
-    @PreAuthorize("@farmSecurity.isOwner(#farmRequest.id, authentication)")
     public ResponseEntity<FarmResponse> saveFarm(@Valid @RequestBody FarmRequest farmRequest,
                                                  Authentication authentication) {
 
