@@ -25,7 +25,7 @@ public class LotService {
     public LotResponse save(LotRequest request, User user){
 
         Farm farm = farmService.findById(request.farmId());
-        lotValidator.validateLotExists(request.id());
+        lotValidator.validateLotExistsAndFarm(request);
         return lotMapper.toResponse(lotRepository.save(lotMapper.toEntity(request, farm)));
     }
 

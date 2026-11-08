@@ -1,7 +1,9 @@
 package gabrielqt.pecus.validator;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import gabrielqt.pecus.dto.request.AnimalRequest;
@@ -22,23 +24,31 @@ public class AnimalValidator {
 
     public void validateSave(AnimalRequest animalRequest) {
 
-        validateAnimalExists(animalRequest);
-        validateExistsEartag(animalRequest.farmId(), animalRequest.earTag());
+        validateAnimalExistsAndFarm(animalRequest);
+        validateExistsEartag(animalRequest.farmId(), animalRequest.earTag(), animalRequest.id());
         validateLotAndFarm(animalRequest.farmId(), animalRequest.lotId());
     }
 
-    private void validateAnimalExists(AnimalRequest animalRequest) {
+    private void validateAnimalExistsAndFarm(AnimalRequest animalRequest) {
 
         if (nonNull(animalRequest.id())) {
 
-            animalRepository.findById(animalRequest.id())
+            Animal animal = animalRepository.findById(animalRequest.id())
                     .orElseThrow(() -> new ObjectNotFoundException(Animal.class, animalRequest.id()));
+
+            if (!animal.getFarm().getId().equals(animalRequest.farmId())) {
+
+                throw new AccessDeniedException("Esse animal não pertence a essa fazenda.");
+            }
         }
     }
 
-    private void validateExistsEartag(Long farmId, String eartag){
+    private void validateExistsEartag(Long farmId, String eartag, Long animalId){
 
-        if (animalRepository.existsByFarmIdAndEartag(farmId,  eartag)) {
+        if ((isNull(animalId) && animalRepository.existsByFarmIdAndEartag(farmId,  eartag))
+                ||
+          (nonNull(animalId) && animalRepository.existsByFarmIdAndEartagAndIdNot(farmId, eartag, animalId))
+        ) {
 
             throw new BusinessException("Número de brinco já cadastrado nessa fazenda.");
         }
